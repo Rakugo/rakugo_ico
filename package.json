@@ -1,0 +1,22 @@
+{
+  "name": "rakugo_ico",
+  "version": "1.0.0",
+  "description": "##Source code for Rakugo ICO Crowdsale",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rakugo/rakugo_ico.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rakugo/rakugo_ico/issues"
+  },
+  "homepage": "https://github.com/Rakugo/rakugo_ico#readme"
+}
