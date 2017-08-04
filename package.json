@@ -18,5 +18,10 @@
   "bugs": {
     "url": "https://github.com/Rakugo/rakugo_ico/issues"
   },
-  "homepage": "https://github.com/Rakugo/rakugo_ico#readme"
+  "homepage": "https://github.com/Rakugo/rakugo_ico#readme",
+  "dependencies": {
+    "solc": "^0.4.14",
+    "zeppelin-solidity": "^1.2.0"
+  },
+  "devDependencies": {}
 }
