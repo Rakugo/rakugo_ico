@@ -2,40 +2,33 @@ pragma solidity ^0.4.13;
 
 import './RakugoToken.sol';
 import './RakugoPresale.sol';
-import 'zeppelin-solidity/contracts/crowdsale/Crowdsale.sol';
 import "zeppelin-solidity/contracts/crowdsale/CappedCrowdsale.sol";
+import 'zeppelin-solidity/contracts/crowdsale/Crowdsale.sol';
+import 'zeppelin-solidity/contracts/crowdsale/FinalizableCrowdsale.sol';
 
-contract RakugoCrowdsale is Crowdsale, CappedCrowdsale {
+contract RakugoCrowdsale is Crowdsale, CappedCrowdsale, FinalizableCrowdsale {
 
-  RakugoToken public rakugoToken;
   address public rakugoPresaleAddress;
   uint256 public rate = 1200;
-  uint256 public companyTokens = 16000000;
+  uint256 public companyTokens = 16000000 ether;
 
   function RakugoCrowdsale(
-  uint256 _saleCap,
   uint256 _startBlock,
   uint256 _endBlock,
   address _wallet,
-  address[] _presales,
-  address _presaleAddress
+  address _presaleAddress,
+  address[] _presales
   )
-  CappedCrowdsale(_saleCap)
+  CappedCrowdsale(19951 ether)
+  FinalizableCrowdsale()
   Crowdsale(_startBlock, _endBlock, rate, _wallet) {
-    rakugoToken = new RakugoToken();
     rakugoPresaleAddress = _presaleAddress;
     initializeCompanyTokens(companyTokens);
     presalePurchase(_presales, _presaleAddress);
   }
 
-  function buyTokens(address beneficiary) payable {
-    require(beneficiary != 0x0);
-    require(validPurchase());
-
-    uint256 weiAmount = msg.value;
-    uint256 tokens = weiAmount.mul(rate);
-    contribute(msg.sender, beneficiary, weiAmount, tokens);
-    forwardFunds();
+  function createTokenContract() internal returns (MintableToken) {
+    return new RakugoToken();
   }
 
   function initializeCompanyTokens(uint256 _companyTokens) internal {
@@ -53,8 +46,21 @@ contract RakugoCrowdsale is Crowdsale, CappedCrowdsale {
   }
 
   function contribute(address purchaser, address beneficiary, uint256 weiAmount, uint256 tokens){
-    rakugoToken.create(beneficiary, tokens);
+    token.mint(beneficiary, tokens);
     TokenPurchase(purchaser, beneficiary, weiAmount, tokens);
-    weiRaised = weiRaised.add(weiAmount);
+  }
+
+ function finalize() onlyOwner {
+    require(!isFinalized);
+    require(hasEnded());
+
+    finalization();
+    Finalized();
+
+    isFinalized = true;
+  }
+
+  function finalization() internal {
+    token.finishMinting();
   }
 }
